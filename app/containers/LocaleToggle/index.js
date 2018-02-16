@@ -14,6 +14,7 @@ import messages from './messages';
 import { appLocales } from '../../i18n';
 import { changeLocale } from '../LanguageProvider/actions';
 import { makeSelectLocale } from '../LanguageProvider/selectors';
+import { CHANGE_LOCALE } from '../LanguageProvider/constants';
 
 export class LocaleToggle extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
@@ -41,5 +42,7 @@ export function mapDispatchToProps(dispatch) {
     dispatch,
   };
 }
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(LocaleToggle);

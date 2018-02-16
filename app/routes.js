@@ -17,7 +17,7 @@ export default function createRoutes(store) {
   const { injectReducer, injectSagas } = getAsyncInjectors(store);
 
   return [
-    {
+    /*{
       path: '/',
       name: 'home',
       getComponent(nextState, cb) {
@@ -46,7 +46,16 @@ export default function createRoutes(store) {
           .then(loadModule(cb))
           .catch(errorLoading);
       },
-    }, {
+    },*/
+    {
+      path: '/canvas',
+      name: 'canvas',
+      getComponent(nextState, cb) {
+        import('containers/Canvas')
+          .then(loadModule(cb))
+          .catch(errorLoading);
+      },
+    },{
       path: '*',
       name: 'notfound',
       getComponent(nextState, cb) {
