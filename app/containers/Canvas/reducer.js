@@ -10,14 +10,16 @@ const initialState = fromJS({
   },*/
   isDrawing: false,
   mode: "Brush",
+  stage:{},
 });
 
 
 function canvasReducer(state = initialState, action) {
   console.log(action);
   switch (action.type) {
-    case 'control':
-    return state.set('mode',action.payload);
+    case 'switch-mode':
+    //return state.set('mode',action.payload);
+
     default:
       return state;
   }

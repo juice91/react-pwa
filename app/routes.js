@@ -17,8 +17,8 @@ export default function createRoutes(store) {
   const { injectReducer, injectSagas } = getAsyncInjectors(store);
 
   return [
-    /*{
-      path: '/',
+   /* {
+      path: '/home',
       name: 'home',
       getComponent(nextState, cb) {
         const importModules = Promise.all([

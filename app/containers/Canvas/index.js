@@ -18,6 +18,9 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
       isDrawing: props.isDrawing,
       mode: props.mode,
     };*/
+    this.state={
+      stage:{}
+    }
     console.log(this.state);
 
   }
@@ -43,11 +46,17 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
   handleMouseDown = () => {
     // console.log("mousedown");
     this.setState({ isDrawing: true });
-    console.log(this.props.mode);
+    //console.log(this.props.mode);
+    /*this.state.stage.push({
+      name:'line',active:true
+    })*/
 
     // TODO: improve
     const stage = this.image.parent.parent;
     this.lastPointerPosition = stage.getPointerPosition();
+
+
+
   };
 
   handleMouseUp = () => {
@@ -69,10 +78,12 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
 
       if (this.props.mode === 'Brush') {
         context.globalCompositeOperation = 'source-over';
+        context.lineWidth = 5;
       } else if (this.props.mode === 'Eraser') {
         context.globalCompositeOperation = 'destination-out';
+        context.lineWidth = 50;
       }
-      console.log( context.globalCompositeOperation);
+    //  console.log( context.globalCompositeOperation);
       context.beginPath();
 
       var localPos = {
@@ -98,7 +109,11 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
       this.image.getLayer().draw();
     }
   };
-
+  serialize(){
+    console.log(this.refs.stage);
+    var json = this.refs.stage.node.toJSON();
+    console.log(json);
+  }
   render() {
    /* this.setState({
       isDrawing: this.props.isDrawing,
@@ -107,8 +122,8 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
     const { canvas } = this.state;
     return (
       <div>
-        <Menu></Menu>
-        <Stage width={window.innerWidth} height={window.innerHeight}>
+        <Menu serialize={this.serialize.bind(this)}></Menu>
+        <Stage ref="stage" width={window.innerWidth} height={window.innerHeight}>
           <Layer>
             <Image
               image={canvas}

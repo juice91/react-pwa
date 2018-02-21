@@ -8,13 +8,12 @@ import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { connect } from 'react-redux';
 
 
-
 const Block = styled.div`
   width:1vw;
   height:1vw;
 `;
 
-class Menu extends React.Component{
+class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,52 +21,58 @@ class Menu extends React.Component{
       mode: props.mode,
     };
   }
-
-  switchMode(mode,toggle){
- if(toggle){
-   this.setState({mode:mode});
-   this.props.dispatch_mode(mode);
- }
-
+  serialize(){
+    this.props.serialize();
   }
-  render(){
-   return (
-     <div className="menu">
-      <Item name={'Brush'} checked={this.state.mode==='Brush'} emitAction={this.switchMode.bind(this)}></Item>
-       <Item name={'Eraser'} checked={this.state.mode==='Eraser'} emitAction={this.switchMode.bind(this)}></Item>
-    </div>)
+
+  switchMode(mode, toggle) {
+    if (toggle) {
+      this.setState({ mode: mode });
+      this.props.dispatch_mode(mode);
+    }
+  }
+
+  render() {
+    return (
+      <div className="menu">
+        <Item name={'Brush'} checked={this.state.mode === 'Brush'} emitAction={this.switchMode.bind(this)}></Item>
+        <Item name={'Eraser'} checked={this.state.mode === 'Eraser'} emitAction={this.switchMode.bind(this)}></Item>
+        <Item name={'Export'} checked={this.state.mode === ''} emitAction={this.serialize.bind(this)}></Item>
+      </div>);
   }
 
 }
 
-class Item extends React.Component{
+class Item extends React.Component {
   constructor(props) {
     super(props);
     console.log(props);
     this.state = {
-      checked:props.checked
+      checked: props.checked,
     };
   }
-  onClick(){
+
+  onClick() {
     let { disabled, checked } = this.state;
-    checked=!this.props.checked;
-   // this.setState({checked});
-    console.log(this.props,checked);
-    this.props.emitAction(this.props.name,checked);
+    checked = !this.props.checked;
+    // this.setState({checked});
+    console.log(this.props, checked);
+    this.props.emitAction(this.props.name, checked);
   }
-  render(){
+
+  render() {
     let { disabled, checked } = this.state;
     return (
       <div className="menu-item">
         <DefaultButton
-          disabled={ disabled }
-          checked={ this.props.checked }
+          disabled={disabled}
+          checked={this.props.checked}
           onClick={this.onClick.bind(this)}
         >
-         {/* <Icon iconName='Edit'/>*/}
+          {/* <Icon iconName='Edit'/>*/}
           {this.props.name}
         </DefaultButton>
-      </div>)
+      </div>);
   }
 
 }
@@ -89,10 +94,10 @@ const mapStateToProps = (state, ownProps) => {
 
 function menuAction(payload) {
   return {
-    type: 'control',
-    payload:payload,
+    type: 'switch-mode',
+    payload: payload,
   };
 }
 
 
-export default connect(mapStateToProps,mapDispatchToProps)(Menu);
+export default connect(mapStateToProps, mapDispatchToProps)(Menu);
