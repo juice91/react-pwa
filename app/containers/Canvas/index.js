@@ -6,8 +6,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import {makeSelect_mode,makeSelect_isDrawing,makeSelect_ui} from './selectors'
 import Menu from 'components/menu';
-import { Stage, Layer, Rect, Image, Group } from 'react-konva';
+import { Stage, Layer, Rect, Image, Group,Path } from 'react-konva';
 
 
 class Canvas extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -26,6 +27,11 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
   }
 
   componentDidMount() {
+
+    this.props.ui.on('command',(...args)=>{
+      console.log(args);
+    })
+
     const canvas = document.createElement('canvas');
     canvas.width = 1920//window.innerWidth;
     canvas.height = 1080//window.innerHeight;
@@ -33,7 +39,7 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
 
     this.setState({ canvas, context });
 
-   // window.addEventListener('resize', this.onresize);
+    // window.addEventListener('resize', this.onresize);
   }
 
   onresize = (event) => {
@@ -46,7 +52,7 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
   handleMouseDown = () => {
     // console.log("mousedown");
     this.setState({ isDrawing: true });
-    //console.log(this.props.mode);
+    console.log(this.props.mode);
     /*this.state.stage.push({
       name:'line',active:true
     })*/
@@ -60,8 +66,12 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
   };
 
   handleMouseUp = () => {
+    const { context, isDrawing, mode } = this.state;
     //  console.log("mouseup");
     this.setState({ isDrawing: false });
+    this.serialize();
+  let save=context.save();
+  console.log(save)
   };
 
   handleMouseMove = () => {
@@ -78,35 +88,39 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
 
       if (this.props.mode === 'Brush') {
         context.globalCompositeOperation = 'source-over';
-        context.lineWidth = 5;
+        context.lineWidth = 25;
       } else if (this.props.mode === 'Eraser') {
         context.globalCompositeOperation = 'destination-out';
         context.lineWidth = 50;
       }
-    //  console.log( context.globalCompositeOperation);
-      context.beginPath();
 
-      var localPos = {
-        x: this.lastPointerPosition.x - this.image.x(),
-        y: this.lastPointerPosition.y - this.image.y(),
-      };
-      //   console.log("moveTo", localPos);
-      context.moveTo(localPos.x, localPos.y);
+      if (this.props.mode === 'Brush' || this.props.mode === 'Eraser') {
+        context.beginPath();
 
-      // TODO: improve
-      const stage = this.image.parent.parent;
+        var localPos = {
+          x: this.lastPointerPosition.x - this.image.x(),
+          y: this.lastPointerPosition.y - this.image.y(),
+        };
+        //   console.log("moveTo", localPos);
+        context.moveTo(localPos.x, localPos.y);
 
-      var pos = stage.getPointerPosition();
-      localPos = {
-        x: pos.x - this.image.x(),
-        y: pos.y - this.image.y(),
-      };
-      //   console.log("lineTo", localPos);
-      context.lineTo(localPos.x, localPos.y);
-      context.closePath();
-      context.stroke();
-      this.lastPointerPosition = pos;
-      this.image.getLayer().draw();
+        // TODO: improve
+        const stage = this.image.parent.parent;
+
+        var pos = stage.getPointerPosition();
+        localPos = {
+          x: pos.x - this.image.x(),
+          y: pos.y - this.image.y(),
+        };
+        //   console.log("lineTo", localPos);
+        context.lineTo(localPos.x, localPos.y);
+        context.closePath();
+        context.stroke();
+        this.lastPointerPosition = pos;
+        this.image.getLayer().draw();
+      }
+      //  console.log( context.globalCompositeOperation);
+
     }
   };
   serialize(){
@@ -114,11 +128,14 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
     var json = this.refs.stage.node.toJSON();
     console.log(json);
   }
+  componentWillUnmount(){
+    this.props.ui.removeAllListeners()
+  }
   render() {
-   /* this.setState({
-      isDrawing: this.props.isDrawing,
-      mode: this.props.mode
-    });*/
+    /* this.setState({
+       isDrawing: this.props.isDrawing,
+       mode: this.props.mode
+     });*/
     const { canvas } = this.state;
     return (
       <div>
@@ -135,6 +152,15 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
               onMouseUp={this.handleMouseUp}
               onMouseMove={this.handleMouseMove}
             />
+            <Path
+            x={50}
+            y={40}
+            data="M12.582,100,200,300,400,200,333,333,222,111,444"
+            fill="green"
+            />
+
+
+
           </Layer>
         </Stage>
       </div>
@@ -142,10 +168,11 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
   }
 }
 
+/*
 const selectCanvas = (state) => state.get('canvas');
-/*const mapStateToProps = createSelector(
+/!*const mapStateToProps = createSelector(
   selectCanvas
-);*/
+);*!/
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -153,6 +180,13 @@ const mapStateToProps = (state, ownProps) => {
     isDrawing: state.get('canvas').get('isDrawing'),
   };
 };
+*/
 
+const mapStateToProps=createSelector(
+  makeSelect_mode(), makeSelect_isDrawing(),makeSelect_ui(),
+  (mode,isDrawing,ui) => ({ mode,isDrawing,ui }),
+ /* makeSelect_isDrawing(),
+  (isDrawing)=>({isDrawing})*/
+)
 
 export default connect(mapStateToProps)(Canvas);

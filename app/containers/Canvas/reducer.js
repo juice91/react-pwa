@@ -1,4 +1,5 @@
 import { fromJS } from "immutable";
+import {EventEmitter} from 'events'
 import { LOAD_REPOS, LOAD_REPOS_ERROR, LOAD_REPOS_SUCCESS } from '../App/constants';
 
 const initialState = fromJS({
@@ -11,6 +12,7 @@ const initialState = fromJS({
   isDrawing: false,
   mode: "Brush",
   stage:{},
+  ui:new EventEmitter()
 });
 
 
@@ -18,8 +20,9 @@ function canvasReducer(state = initialState, action) {
   console.log(action);
   switch (action.type) {
     case 'switch-mode':
-    //return state.set('mode',action.payload);
-
+    return state.set('mode',action.payload);
+    case 'ui-command':
+      state.get('ui').emit('command',action.payload)
     default:
       return state;
   }

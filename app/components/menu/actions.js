@@ -4,3 +4,10 @@ export function menuAction() {
     payload:{}
   };
 }
+
+export function menuCommand() {
+  return {
+    type: 'ui',
+    payload:{}
+  };
+}
