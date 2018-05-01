@@ -8,6 +8,8 @@ import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import {Tools} from 'react-sketch';
+
 const Block = styled.div`
   width:1vw;
   height:1vw;
@@ -20,6 +22,7 @@ class Menu extends React.Component {
       isDrawing: props.isDrawing,
       mode: props.mode,
     };
+    console.log(Tools);
   }
   serialize(){
     this.props.serialize();
@@ -42,9 +45,10 @@ class Menu extends React.Component {
 
     return (
       <div className="menu">
-        <Item name={'Pen'} checked={this.state.mode === 'Pen'} emitAction={this.switchMode.bind(this)}></Item>
-        <Item name={'Brush'} checked={this.state.mode === 'Brush'} emitAction={this.switchMode.bind(this)}></Item>
-        <Item name={'Eraser'} checked={this.state.mode === 'Eraser'} emitAction={this.switchMode.bind(this)}></Item>
+        <Item name={'Select'} checked={this.state.mode === 'select'} emitAction={this.switchMode.bind(this)}></Item>
+        <Item name={'Pencil'} checked={this.state.mode === 'pencil'} emitAction={this.switchMode.bind(this)}></Item>
+        <Item name={'Brush'} checked={this.state.mode === 'brush'} emitAction={this.switchMode.bind(this)}></Item>
+        <Item name={'Eraser'} checked={this.state.mode === 'eraser'} emitAction={this.switchMode.bind(this)}></Item>
         <Item name={'Clear'} checked={this.state.mode === ''} emitAction={this.cmd_clear.bind(this)}></Item>
         <Item name={'Export'} checked={this.state.mode === ''} emitAction={this.serialize.bind(this)}></Item>
       </div>);
@@ -65,8 +69,8 @@ class Item extends React.Component {
     let { disabled, checked } = this.state;
     checked = !this.props.checked;
     // this.setState({checked});
-    console.log(this.props, checked);
-    this.props.emitAction(this.props.name, checked);
+   // console.log(this.props, checked);
+    this.props.emitAction(this.props.name.toLowerCase(), checked);
   }
 
   render() {

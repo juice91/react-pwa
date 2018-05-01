@@ -10,7 +10,7 @@ const initialState = fromJS({
     repositories: false,
   },*/
   isDrawing: false,
-  mode: "Brush",
+  mode: "brush",
   stage:{},
   ui:new EventEmitter()
 });
