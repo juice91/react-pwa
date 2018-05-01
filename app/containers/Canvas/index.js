@@ -168,7 +168,7 @@ class Canvas extends React.Component { // eslint-disable-line react/prefer-state
         }
         else{
           return ""
-        }¬
+        }
       }
     }
 
